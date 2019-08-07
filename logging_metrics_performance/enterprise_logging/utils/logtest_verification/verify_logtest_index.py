@@ -44,9 +44,9 @@ class ElsHelper:
         r = requests.get(url, headers=self.headers, verify=False)
         r.raise_for_status()
         if 'json' in r.headers['content-type']:
-            return r.json()
+            print(json.dumps(r.json(), indent=2))
         else:
-            return r.text
+            print(r.text)
 
     def print_health(self):
         endpoint = "/_cluster/health"
@@ -281,8 +281,7 @@ if __name__ == '__main__':
 
         # Handle --custom
         if args.custom:
-            query_response = es.custom_query(args.custom)
-            print(json.dumps(query_response))
+            es.custom_query(args.custom)
             exit(0)
 
         # Handle --print-indices
