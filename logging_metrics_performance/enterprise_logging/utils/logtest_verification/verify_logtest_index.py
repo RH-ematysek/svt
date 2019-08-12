@@ -178,40 +178,20 @@ def verify_els_messages(els_json: dict, max_expected):
 
     print("Expected max number: {}".format(max_expected))
 
-    # Find number of occurrences for each message_num
-    # duplicates_found = 0
-    # missing_found = 0
-    # missing_nums = []
-    # print(max_expected)
-
+    # Find number of occurrences for each number from min_num to max_num
     num_tracker = {i: 0 for i in range(1, max_expected + 1)}
     for i in message_num_list:
         num_tracker[i] += 1
     missing_nums = [i for i in num_tracker if num_tracker[i] == 0]
-    # duplicate_nums = [i for i in num_tracker if num_tracker[i] > 1]
+    missing_found = len(missing_nums)
+
     # Output duplicates
     duplicates_found = 0
     for k, v in num_tracker.items():
         if v > 1:
             print("Duplicate: {} - Count: {}".format(k, v))
             duplicates_found += 1
-    # Currently assume all message ranges should go from 1-
-    # for i in range(1, max_expected + 1):
-    # if i > max_num:
-    #     print("Missing: {} - {}".format(i, max_expected))
-    #     missing_found += (max_expected - i)
-    #     break
-    # count = message_num_list.count(i)
-    # if count > 1:
-    #     print("Duplicate: {} - Count: {}".format(i, count))
-    #     duplicates_found += 1
-    # elif count == 0:
-    # print("Missing: {}".format(i))
-    # missing_nums.append(i)
-    # missing_found += 1
-    # print(missing_nums)
 
-    missing_found = len(missing_nums)
     # Output missing number ranges
     missing_ranges = compute_ranges(missing_nums)
     for i in missing_ranges:
