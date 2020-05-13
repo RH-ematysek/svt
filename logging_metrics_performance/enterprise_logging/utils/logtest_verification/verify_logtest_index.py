@@ -96,8 +96,10 @@ class ElsHelper:
             data = {"query": query}
             print(data)
             headers['Content-Type'] = "application/json"
-        count_request = requests.get(self.base_url + count_endpoint, headers=headers, verify=False, data=json.dumps(data))
-        # count_request.raise_for_status()
+            count_request = requests.get(self.base_url + count_endpoint, headers=headers, verify=False, data=json.dumps(data))
+        else:
+            count_request = requests.get(self.base_url + count_endpoint, headers=headers, verify=False)
+        count_request.raise_for_status()
         index_count = count_request.json()["count"]
         return index_count
 
