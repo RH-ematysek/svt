@@ -25,3 +25,4 @@ for ((i=0; i<NUM_PROJECTS; i++)); do
   oc delete project "${BASENAME}${i}"
 done
 
+date
