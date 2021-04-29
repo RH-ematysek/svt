@@ -10,6 +10,10 @@ echo "number of projects: $NUM_PROJECTS"
 echo "Parallel processes: $num_procs"
 echo "Sleep time between create cycle and delete cycle: $sleep_mins"
 echo "Writing subprocess logs to ./op.log"
+if [ -e op.log ]; then
+  echo "op.og exists, subprocess logs will be appended"
+  echo "$(date) - New Run" >> op.log
+fi
 
 num_jobs="\j"  # The prompt escape for number of jobs currently running
 echo "$(date) - Create cycle start"
