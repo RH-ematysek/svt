@@ -15,6 +15,8 @@ if [ -e op.log ]; then
   echo "$(date) - New Run" >> op.log
 fi
 
+SECONDS=0
+
 num_jobs="\j"  # The prompt escape for number of jobs currently running
 echo "$(date) - Create cycle start"
 for ((i=0; i<NUM_PROJECTS; i++)); do
@@ -56,6 +58,11 @@ while [ $PROJECTS_TERMINATING -gt 0 ]; do
   fi
 done
 
+DURATION=$SECONDS
+
+
 echo "Output operator and node status"
 oc get co
 oc get nodes
+
+echo "Time taken: $DURATION"
