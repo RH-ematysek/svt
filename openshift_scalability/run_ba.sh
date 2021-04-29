@@ -1,25 +1,39 @@
 #!/bin/bash
 
 BASENAME=${1:-baa}
-NUM_PROJECTS=${2:-250}
+NUM_PROJECTS=${2:-1000}
+num_procs=${3:-10}
+sleep_mins=${4:-10}
 
-echo "Starting run basename: $BASENAME number of projects: $NUM_PROJECTS"
+echo "Starting run basename: $BASENAME"
+echo "number of projects: $NUM_PROJECTS"
+echo "Parallel processes: $num_procs"
+echo "Sleep time between create cycle and delete cycle: $sleep_mins"
+echo "Writing subprocess logs to ./op.log"
 date
 
+num_jobs="\j"  # The prompt escape for number of jobs currently running
 for ((i=0; i<NUM_PROJECTS; i++)); do
-  oc new-project "${BASENAME}${i}" > /dev/null && echo "Created project ${BASENAME}${i}"
+  while (( ${num_jobs@P} >= num_procs )); do
+    wait -n
+  done
+  oc new-project --skip-config-write "${BASENAME}${i}" > /dev/null && echo "Created project ${BASENAME}${i}" &>> op.log && oc label ns "${BASENAME}${i}" test=badactor &>> op.log &
 done
 echo "Creation cycle complete"
 date
 
-echo "Sleeping 10 mins..."
-sleep 10m
+echo "Sleeping $sleep_mins mins..."
+sleep "${sleep_mins}m"
 
-date
+echo "$(date) - Delete cycle start"
+#oc delete ns -l test=badactor
 for ((i=0; i<NUM_PROJECTS; i++)); do
-  oc delete project "${BASENAME}${i}"
+  while (( ${num_jobs@P} >= num_procs )); do
+    wait -n
+  done
+  oc delete project "${BASENAME}${i}" >> op.log &
 done
-echo "Delete cycle complete"
+echo "$(date) - Delete cycle complete"
 
 echo "Waiting for projects to terminate..."
 PROJECTS_TERMINATING=999
